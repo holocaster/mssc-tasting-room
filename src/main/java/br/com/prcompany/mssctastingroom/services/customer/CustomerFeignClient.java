@@ -2,7 +2,9 @@ package br.com.prcompany.mssctastingroom.services.customer;
 
 import br.com.prcompany.beerevents.model.BeerOrderDTO;
 import br.com.prcompany.beerevents.model.CustomerDto;
+import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,8 @@ public interface CustomerFeignClient {
     String CIRCUIT_BREAKER = "CustomerFeignClientBreaker";
 
     @RequestMapping(method = RequestMethod.GET, value = "${customer_path}")
-    @CircuitBreaker(name = CIRCUIT_BREAKER, fallbackMethod = "fallback")
+//    @CircuitBreaker(name = CIRCUIT_BREAKER, fallbackMethod = "fallback")
+    @Retry(name = CIRCUIT_BREAKER, fallbackMethod = "fallback")
     ResponseEntity<CustomerDto> getCustomer(@PathVariable UUID customerId);
 
     @RequestMapping(method = RequestMethod.POST, value = "${order_path}")
