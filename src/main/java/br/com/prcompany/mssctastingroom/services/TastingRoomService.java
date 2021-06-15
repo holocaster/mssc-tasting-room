@@ -11,9 +11,11 @@ import br.com.prcompany.mssctastingroom.web.mappers.TastingRoomMapper;
 import br.com.prcompany.mssctastingroom.web.model.TastingRoomDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.naming.ServiceUnavailableException;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -27,9 +29,13 @@ public class TastingRoomService {
 
     private final TastingRoomMapper mapper;
 
-    public TastingRoomDTO createTastingRoom(UUID customerId) {
+    public TastingRoomDTO createTastingRoom(UUID customerId) throws ServiceUnavailableException {
 
         final ResponseEntity<CustomerDto> customer = this.customerFeignClient.getCustomer(customerId);
+
+        if (HttpStatus.SERVICE_UNAVAILABLE.equals(customer.getStatusCode())) {
+            throw new ServiceUnavailableException("Customer service is not available");
+        }
 
         if (customer.getBody() == null) {
             throw new ObjectNotFoundException("Customer not found with id: " + customerId);

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.naming.ServiceUnavailableException;
 import java.net.URI;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public class TastingRoomController {
     private TastingRoomService tastingRoomService;
 
     @PostMapping("{customerId}")
-    public ResponseEntity<Void> createTastingRoom(@PathVariable("customerId") UUID customerId) {
+    public ResponseEntity<Void> createTastingRoom(@PathVariable("customerId") UUID customerId) throws ServiceUnavailableException {
         log.debug("Calling REST createTastingRoom");
         final TastingRoomDTO tastingRoomDTO = this.tastingRoomService.createTastingRoom(customerId);
 
