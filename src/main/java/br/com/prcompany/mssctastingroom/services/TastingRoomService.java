@@ -2,6 +2,7 @@ package br.com.prcompany.mssctastingroom.services;
 
 import br.com.prcompany.beerevents.exceptions.ObjectNotFoundException;
 import br.com.prcompany.beerevents.model.BeerOrderDTO;
+import br.com.prcompany.beerevents.model.BeerOrderLineDTO;
 import br.com.prcompany.beerevents.model.CustomerDto;
 import br.com.prcompany.mssctastingroom.domain.TastingRoom;
 import br.com.prcompany.mssctastingroom.exceptions.OrderNotInsertedException;
@@ -16,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.naming.ServiceUnavailableException;
+import java.util.Arrays;
 import java.util.UUID;
 
 @RequiredArgsConstructor
@@ -41,7 +43,10 @@ public class TastingRoomService {
             throw new ObjectNotFoundException("Customer not found with id: " + customerId);
         }
 
-        final BeerOrderDTO beerOrderDTO = this.customerFeignClient.saveOrder(customerId, BeerOrderDTO.builder().build());
+        BeerOrderDTO beerOrderDTO = BeerOrderDTO.builder().build();
+        beerOrderDTO.setBeerOrderLines(Arrays.asList(BeerOrderLineDTO.builder().upc("0631234200036").build()));
+
+        beerOrderDTO = this.customerFeignClient.saveOrder(customerId, beerOrderDTO);
 
         if (beerOrderDTO == null) {
             throw new OrderNotInsertedException("Order can not be inserted for customer: " + customerId);
