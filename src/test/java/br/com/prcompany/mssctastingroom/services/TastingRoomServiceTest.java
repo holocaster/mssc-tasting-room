@@ -28,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = MsscTastingRoomApplication.class)
 class TastingRoomServiceTest {
 
+    private static final String TESTE = "TESTE";
+
     @Autowired
     private TastingRoomService tastingRoomService;
 
@@ -48,7 +50,7 @@ class TastingRoomServiceTest {
     void createTastingRoomServiceUnavailable() {
         Mockito.when(this.customerFeignClient.getCustomer(Mockito.any(UUID.class))).thenReturn(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).build());
         assertThrows(ServiceUnavailableException.class, () -> {
-            this.tastingRoomService.createTastingRoom(UUID.randomUUID());
+            this.tastingRoomService.createTastingRoom(UUID.randomUUID(), TESTE);
         });
     }
 
@@ -56,7 +58,7 @@ class TastingRoomServiceTest {
     void createTastingRoomCustomerNotFound() throws JsonProcessingException {
         Mockito.when(this.customerFeignClient.getCustomer(Mockito.any(UUID.class))).thenReturn(ResponseEntity.notFound().build());
         assertThrows(ObjectNotFoundException.class, () -> {
-            this.tastingRoomService.createTastingRoom(UUID.randomUUID());
+            this.tastingRoomService.createTastingRoom(UUID.randomUUID(), TESTE);
         });
     }
 
@@ -65,7 +67,7 @@ class TastingRoomServiceTest {
         Mockito.when(this.customerFeignClient.getCustomer(Mockito.any(UUID.class))).thenReturn(ResponseEntity.ok(CustomerDto.builder().build()));
         Mockito.when(this.customerFeignClient.saveOrder(Mockito.any(UUID.class) ,Mockito.any(BeerOrderDTO.class))).thenReturn(null);
         assertThrows(OrderNotInsertedException.class, () -> {
-            this.tastingRoomService.createTastingRoom(UUID.randomUUID());
+            this.tastingRoomService.createTastingRoom(UUID.randomUUID(), TESTE);
         });
     }
 
@@ -74,7 +76,7 @@ class TastingRoomServiceTest {
         Mockito.when(this.customerFeignClient.getCustomer(Mockito.any(UUID.class))).thenReturn(ResponseEntity.ok(CustomerDto.builder().build()));
         Mockito.when(this.customerFeignClient.saveOrder(Mockito.any(UUID.class) ,Mockito.any(BeerOrderDTO.class))).thenReturn(BeerOrderDTO.builder().build());
 
-        TastingRoomDTO tastingRoomDTO = this.tastingRoomService.createTastingRoom(UUID.randomUUID());
+        TastingRoomDTO tastingRoomDTO = this.tastingRoomService.createTastingRoom(UUID.randomUUID(), TESTE);
 
         assertNotNull(tastingRoomDTO.getCustomerId());
     }

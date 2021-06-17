@@ -25,10 +25,10 @@ public class TastingRoomController {
     @Autowired
     private TastingRoomService tastingRoomService;
 
-    @PostMapping("{customerId}")
-    public ResponseEntity<Void> createTastingRoom(@PathVariable("customerId") UUID customerId) throws ServiceUnavailableException {
+    @PostMapping("{customerId}/{upc}")
+    public ResponseEntity<Void> createTastingRoom(@PathVariable("customerId") UUID customerId, @PathVariable("upc") String upc) throws ServiceUnavailableException {
         log.debug("Calling REST createTastingRoom");
-        final TastingRoomDTO tastingRoomDTO = this.tastingRoomService.createTastingRoom(customerId);
+        final TastingRoomDTO tastingRoomDTO = this.tastingRoomService.createTastingRoom(customerId, upc);
 
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(tastingRoomDTO.getId().toString()).toUri();
         return ResponseEntity.created(uri).build();
